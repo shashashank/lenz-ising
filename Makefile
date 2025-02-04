@@ -5,6 +5,7 @@ BUILDDIR := build
 TARGET1 := bin/runner1
 TARGET2 := bin/runner2
 TARGET3 := bin/runner3
+TARGET4 := bin/runner4
  
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
@@ -17,11 +18,7 @@ INC := -I include
 MAIN1 := src/main1.cpp
 MAIN2 := src/main2.cpp
 MAIN3 := src/main3.cpp
-
-# Object files for each target
-# OBJS1 := $(filter-out $(BUILDDIR)/main2.o,$(OBJECTS)) $(filter-out $(BUILDDIR)/main3.o,$(OBJECTS))
-# OBJS2 := $(filter-out $(BUILDDIR)/main1.o,$(OBJECTS)) $(filter-out $(BUILDDIR)/main3.o,$(OBJECTS))
-# OBJS2 := $(filter-out $(BUILDDIR)/main1.o,$(OBJECTS)) $(filter-out $(BUILDDIR)/main2.o,$(OBJECTS))
+MAIN4 := src/main4.cpp
 
 # Rules for each target
 $(TARGET1): $(OBJS1) $(BUILDDIR)/main1.o
@@ -33,6 +30,10 @@ $(TARGET2): $(OBJS2) $(BUILDDIR)/main2.o
 	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB)
 
 $(TARGET3): $(OBJS3) $(BUILDDIR)/main3.o
+	@echo " Linking $@..."
+	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB)
+
+$(TARGET4): $(OBJS4) $(BUILDDIR)/main4.o
 	@echo " Linking $@..."
 	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB)
 

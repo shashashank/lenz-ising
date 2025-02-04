@@ -1,4 +1,4 @@
-// 1D Ising Resetting for magnetisation
+// 1D Ising Resetting for energy
 
 #include"ising.h"
 #include<iostream>
@@ -10,7 +10,7 @@
 
 int main(int argc, char *argv[]){
     std::ofstream data;
-    data.open("magnetisation.txt");
+    data.open("energy.txt");
     const int L = 100; // L**2 = 10000
     isingLattice lattice(L);
     double T = 3.5, beta = 1.0/T;
@@ -21,12 +21,15 @@ int main(int argc, char *argv[]){
     while (totalSteps<300000){
 
         // resetting/initialising the lattice
-        lattice.initialise(m0);
+        lattice.initialise(0.0);
+        for (size_t i = 0; i < 1000; i++){
+            lattice.glauber1DimSweep(beta);
+        }
 
         // iters from exp dist scaled to lattice size and spin flips attempted
         int stepsItr =  static_cast<int>(expDis(mt19937Engine)*L*L);
         lattice.glauber1dInterval(beta, stepsItr);
-        data << std::fixed<<std::setprecision(10)<<lattice.magnetisation()<<"\n";
+        data << std::fixed<<std::setprecision(10)<<lattice.energy1D()<<"\n";
         totalSteps+=stepsItr/(L*L);
     }
     data.close();
