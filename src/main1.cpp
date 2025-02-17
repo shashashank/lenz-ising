@@ -1,18 +1,15 @@
-// This file creates an executable for simulating the ising model for statistics without resetting
+// This file creates an executable for simulating the 1d ising model for statistics without resetting
 
 #include"ising.h"
-#include<iostream>
-#include<fstream>
-#include<string>
 #include<chrono>
 #include <iomanip>
 
 int main(int argc, char *argv[]){
 
-    const int thmTime=50000, simTime = 100, steps=10;
-    const int L = 100; // N = L**2 = 10000
-    const int nTrials = 100;
-    double betaInitial=1.0, betaFinal = 1.0/1.1;
+    const int thmTime=50000, simTime = 100, steps=1;
+    const int N = 1000;
+    // const int nTrials = 100;
+    // double betaInitial=1.0, betaFinal = 1.0/1.1;
 
     std::ofstream data;    
     std::vector<double> energy(steps*simTime), mag(steps*simTime);
@@ -20,34 +17,51 @@ int main(int argc, char *argv[]){
     double specHeat, sus;
     typedef std::chrono::high_resolution_clock Clock;
     using FpMilliseconds = std::chrono::duration<float, std::chrono::milliseconds::period>;
-    for (int j =0; j<nTrials; j++){
-        isingLattice lattice(L);
+
+    isingLattice lattice(N);
+
+    data.open("data");
+    data<< "#BETA\tMAGNETISATION\tENERGY\n";
+
+    // for (int j =0; j<nTrials; j++){
+    //     isingLattice lattice(N);
+    for (double j =0; j<10; j+=0.1){
+        double beta = 1.0/j;
 
         // initialization
-        lattice.initialise(0);
+        lattice.initialise(0.5);
 
         //thermalization
         for (int k = 0; k < thmTime; k++){
-            lattice.glauber1DimSweep(betaInitial);
+            lattice.glauber1DimSweep(1.0/j);
         }
 
         // dynamics and data collection
-        for (int k = 0; k < simTime; k++){
-            for (size_t i = 0; i < steps; i++){
-                energy[k*steps+i] = lattice.energy1D();
-                mag[k*steps+i] = lattice.magnetisation();
-                lattice.glauber1dInterval(betaFinal, L*L/steps);
-            }
+        for (size_t k = 0; k < simTime; k++){
+            energy[k] = lattice.energy1D();
+            mag[k] = lattice.magnetisation();
+            lattice.glauber1dInterval(beta, N);    
         }
+        
+        // for (int k = 0; k < simTime; k++){
+        //     for (size_t i = 0; i < steps; i++){
+        //         energy[k*steps+i] = lattice.energy1D();
+        //         mag[k*steps+i] = lattice.magnetisation();
+        //         lattice.glauber1dInterval(betaFinal, N/steps);
+        //     }
+        // }
+
         // writing to disk
-        data.open("data"+std::to_string(j));
-        data<< "#MAGNETISATION\tENERGY\n";
+        // data.open("data"+std::to_string(j));
+        // // data<< "#BETA\tMAGNETISATION\tENERGY\n";
         for (size_t i = 0; i < steps*simTime; i++)
         {
+            data << std::fixed<<std::setprecision(10)<<1.0/j<<"\t";
             data << std::fixed<<std::setprecision(10)<<mag[i]<<"\t";
             data << std::fixed<<std::setprecision(10)<<energy[i]<<"\n";
         }
-        data.close();
-        std::cout << "Fininshed with " << j+1 << " trials" <<std::endl;
+        // data.close();
+        std::cout << "Fininshed with " << j*10 << " trials" <<std::endl;
     }
+    data.close();
 }

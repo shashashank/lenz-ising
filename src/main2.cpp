@@ -14,7 +14,7 @@ int main(int argc, char *argv[]){
     typedef std::chrono::high_resolution_clock Clock;
     using FpMilliseconds = std::chrono::duration<float, std::chrono::milliseconds::period>;
     for(int L = 4; L<=128; L*=2){
-        isingLattice lattice(L);
+        isingLattice lattice(L*L);
         count = 0;
         data.open("data"+std::to_string(L));
         for (double beta = 0.3; beta <=0.6 ; beta+=0.001)
