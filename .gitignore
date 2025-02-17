@@ -3,3 +3,8 @@ data/
 bin/
 plots/*.png
 plots/*.pdf
+plots/altP(m)r/
+plots/P(m)r/
+test/
+*pdf
+pdfs/
