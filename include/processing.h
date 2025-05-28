@@ -1,7 +1,6 @@
 
 #include <algorithm>
 
-
 class InputParser{
     public:
         InputParser (int &argc, char **argv){

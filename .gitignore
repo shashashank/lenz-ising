@@ -3,8 +3,15 @@ data/
 bin/
 plots/*.png
 plots/*.pdf
+plots/arrays
+plots/*.ipynb
+plots/arrays10000/
 plots/altP(m)r/
 plots/P(m)r/
+plots/P(E)r/
 test/
 *pdf
 pdfs/
+l=10000/
+l=100/
+plots/plots.ipynb
