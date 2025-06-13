@@ -7,13 +7,15 @@ TARGET2 := bin/runner2
 TARGET3 := bin/runner3
 TARGET35 := bin/runner3.5
 TARGET4 := bin/runner4
+TARGET5 := bin/runnerExact
  
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -g -O2 -std=c++20 -Wall -pedantic
-LIB := -fopenmp #-pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
-INC := -I include
+# LIB := -fopenmp #-pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
+LIB := -L/opt/ohpc/pub/libs/gnu12/gsl/2.7.1/lib -lgsl -lgslcblas -lm
+INC := -I include -I/opt/ohpc/pub/libs/gnu12/gsl/2.7.1/include
 
 # Separate main source files for each target
 MAIN1 := src/main1.cpp
@@ -21,6 +23,7 @@ MAIN2 := src/main2.cpp
 MAIN3 := src/main3.cpp
 MAIN35 := src/main3.5.cpp
 MAIN4 := src/main4.cpp
+MAIN5 := src/mainExact.cpp
 
 # Rules for each target
 $(TARGET1): $(OBJS1) $(BUILDDIR)/main1.o
@@ -40,6 +43,10 @@ $(TARGET35): $(OBJS35) $(BUILDDIR)/main3.5.o
 	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB)
 
 $(TARGET4): $(OBJS4) $(BUILDDIR)/main4.o
+	@echo " Linking $@..."
+	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB)
+
+$(TARGET5): $(OBJS5) $(BUILDDIR)/mainExact.o
 	@echo " Linking $@..."
 	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB)
 

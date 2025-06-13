@@ -15,3 +15,7 @@ pdfs/
 l=10000/
 l=100/
 plots/plots.ipynb
+exactFast/*
+rStar.sh
+plots/saveToDisk.py
+plots/nohup.out
