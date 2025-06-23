@@ -12,9 +12,9 @@ TARGET5 := bin/runnerExact
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -g -O2 -std=c++20 -Wall -pedantic
+CFLAGS := -g -O3 -std=c++20 -Wall -pedantic
 # LIB := -fopenmp #-pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
-LIB := -L/opt/ohpc/pub/libs/gnu12/gsl/2.7.1/lib -lgsl -lgslcblas -lm
+LIB := -L/opt/ohpc/pub/libs/gnu12/gsl/2.7.1/lib -lgsl -lgslcblas -lm -fopenmp
 INC := -I include -I/opt/ohpc/pub/libs/gnu12/gsl/2.7.1/include
 
 # Separate main source files for each target
