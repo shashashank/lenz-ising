@@ -11,11 +11,6 @@ int main(int argc, char **argv){
         // To do: write help
     }
 
-    // const std::string &filename = input.getCmdOption("-f");
-    // if (!filename.empty()){
-    //     // Do interesting things ...
-    // }
-
     double T;
     const std::string &Tstring = input.getCmdOption("-T");
     if (!Tstring.empty()){
@@ -71,15 +66,9 @@ int main(int argc, char **argv){
     }
     // std::cout << "seed = " << seed << "\n";
 
-    std::ofstream reset; // data, reset;
-    // data.open("regularData"+std::to_string(r)+".txt");
-    // data.setf(std::ios::fixed); data.precision(10);
+    std::ofstream reset;
     reset.open("resetData"+std::to_string(r)+".txt");
     reset.setf(std::ios::fixed); reset.precision(10);
-    // rTimes.open("resetTimes"+std::to_string(r)+".txt");
-    // rTimes.setf(std::ios::fixed); rTimes.precision(10);
-    
-    // int stepsItr2 = N/10;
     const double beta = 1.0/T;
     
     std::exponential_distribution<> expDis(r);
@@ -88,32 +77,15 @@ int main(int argc, char **argv){
     isingLattice lattice(N, mt19937Engine);
     
     double energyTmp, magTmp;
-    
-    // typedef std::chrono::high_resolution_clock Clock;
-    // auto t0=Clock::now();
     for(int t = 0; t < totalSteps; t++){
 
         // iters from exp dist scaled to lattice size and spin flips attempted
         int stepsItr =  static_cast<int>(expDis(mt19937Engine)*N);
         lattice.initialise(m0); // initialising the lattice
-        // while(stepsItr2<=stepsItr){
-        //     lattice.glauber1dInterval(beta, N/10);
-        //     stepsItr2+=N/10;
-        //     energyTmp = lattice.energy1D();
-        //     magTmp = lattice.magnetisation();
-        //     data << energyTmp << "\t" << magTmp << "\n";
-        // }
-        // stepsItr2 = mod(stepsItr+stepsItr2, N/10);
         lattice.glauber1dInterval(beta, stepsItr);
         energyTmp = lattice.energy1D();
         magTmp = lattice.magnetisation();
         reset << energyTmp << "\t" << magTmp << "\n";
-        // rTimes << stepsItr << "\n";
     }
-    // auto t1=Clock::now();
-    // std::chrono::duration<double> dts = (t1-t0); // time in s
-    // std::cout << "Time in s: "<< dts.count() << std::endl;
-    // data.close();
     reset.close();
-    // rTimes.close();
 }
