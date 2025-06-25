@@ -79,9 +79,9 @@ int main(int argc, char **argv){
     double energyTmp, magTmp;
     for(int t = 0; t < totalSteps; t++){
         // iters from exp dist scaled to lattice size and spin flips attempted
-        int stepsItr =  static_cast<int>(expDis(mt19937Engine)*L);
+        int stepsItr =  static_cast<int>(expDis(mt19937Engine)*L*L);
         lattice.initialise(m0); // initialising the lattice
-        lattice.glauberSweep(beta, stepsItr);
+        lattice.glauberInterval(beta, stepsItr);
         energyTmp = lattice.energy();
         magTmp = lattice.magnetisation();
         reset << energyTmp << "\t" << magTmp << "\n";
