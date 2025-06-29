@@ -11,6 +11,7 @@
 #include <iomanip>
 #include "randutils.hpp"
 #include "processing.h"
+#include <omp.h>
 #include <gsl/gsl_histogram.h>
 
 const int n = 10000000, stepSize = 10000, maxVal = 100;
@@ -113,8 +114,8 @@ int main(int argc, char **argv){
     std::exponential_distribution<> expDis(r);
     std::vector<double> energyArray(maxVal*stepSize);//, magArray(maxVal);
     std::vector<double> statisticsEnergy(n);//, statisticsMag(n);
-    std::ofstream rawFile; rawFile.open("rawFile"+std::to_string(r), std::ios_base::app);
-    std::ofstream histFile; histFile.open("histFile"+std::to_string(r), std::ios_base::app);
+    std::ofstream rawFile; rawFile.open("rawFile"+std::to_string(r));
+    std::ofstream histFile; histFile.open("histFile"+std::to_string(r));
     eta0=m0*m0; // infinite temperature
     // eta0=1.0; // 0 temperature
     eta=std::tanh(1.0/T); gamma=std::tanh(2.0/T);
@@ -131,11 +132,24 @@ int main(int argc, char **argv){
         statisticsEnergy[i] = (statisticsEnergy[i] >= maxVal)? energy(statisticsEnergy[i], eta, eta0, gamma, 100)
         : energyArray[static_cast<int>(statisticsEnergy[i]*stepSize)];
     }
+ 
+    // write the contents of statisticsEnergy to rawFile on the main thread
+    omp_set_dynamic(0);
+    omp_set_num_threads(2);
+#pragma omp parallel sections
+{
+    #pragma omp section
+    {
+        // write the contents of statisticsEnergy to rawFile
+        for (int i = 0; i < n; i++)
+            rawFile << std::fixed << std::setprecision(3) << statisticsEnergy[i] << "\n";
+    }
     
     // histogram and calculate standard deviation
-    double std = std::sqrt(histVariance(statisticsEnergy, 100));
-    histFile << std::fixed << std::setprecision(10) << std << "\n";
-
-    // standard deviation without histogram
-    rawFile << std::fixed << std::setprecision(10) << std::sqrt(variance(statisticsEnergy)) << "\n";
+    #pragma omp section
+    {
+        double std = std::sqrt(histVariance(statisticsEnergy, 100));
+        histFile << std::fixed << std::setprecision(3) << std << "\n";
+    }
+}
 }
